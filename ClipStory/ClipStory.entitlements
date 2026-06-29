@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <!--
+      Hardened runtime exceptions needed for:
+      - com.apple.security.temporary-exception.mach-lookup.global-name: not needed here
+      CGEvent tap and RegisterEventHotKey require Accessibility permission granted
+      by the user in System Settings; no entitlement can replace that runtime grant.
+    -->
+    <key>com.apple.security.app-sandbox</key>
+    <false/>
+</dict>
+</plist>

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>CFBundleExecutable</key>
+    <string>$(EXECUTABLE_NAME)</string>
+    <key>CFBundleIdentifier</key>
+    <string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
+    <key>CFBundleInfoDictionaryVersion</key>
+    <string>6.0</string>
+    <key>CFBundleName</key>
+    <string>ClipStory</string>
+    <key>CFBundlePackageType</key>
+    <string>APPL</string>
+    <key>CFBundleShortVersionString</key>
+    <string>1.0</string>
+    <key>CFBundleVersion</key>
+    <string>1</string>
+    <!-- Run as a menu-bar-only app; hides Dock icon and app switcher entry -->
+    <key>LSUIElement</key>
+    <true/>
+    <key>NSHumanReadableCopyright</key>
+    <string>© 2024 Brian Schmalz</string>
+    <key>NSPrincipalClass</key>
+    <string>NSApplication</string>
+    <!-- Required for synthesising CGEvent keystrokes and global hotkey tap -->
+    <key>NSAppleEventsUsageDescription</key>
+    <string>ClipStory needs Accessibility access to paste clipboard items into other apps.</string>
+</dict>
+</plist>

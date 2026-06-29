@@ -1,0 +1,36 @@
+name: ClipStory
+options:
+  bundleIdPrefix: com.bschmalz
+  deploymentTarget:
+    macOS: "13.0"
+  xcodeVersion: "16"
+  createIntermediateGroups: true
+
+settings:
+  base:
+    SWIFT_VERSION: "5.9"
+    MACOSX_DEPLOYMENT_TARGET: "13.0"
+    CODE_SIGN_STYLE: Automatic
+    DEVELOPMENT_TEAM: ""
+
+targets:
+  ClipStory:
+    type: application
+    platform: macOS
+    sources:
+      - path: ClipStory
+        excludes:
+          - "Resources/Info.plist"
+    resources:
+      - path: ClipStory/Resources
+        excludes:
+          - "Info.plist"
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.bschmalz.ClipStory
+        INFOPLIST_FILE: ClipStory/Resources/Info.plist
+        CODE_SIGN_ENTITLEMENTS: ClipStory/ClipStory.entitlements
+        ENABLE_HARDENED_RUNTIME: YES
+        OTHER_SWIFT_FLAGS: ""
+    scheme:
+      testTargets: []
