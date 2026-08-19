@@ -11,3 +11,8 @@ xcuserdata/
 *.zip
 *.dmg
 *.xcarchive
+
+# Secrets — never commit
+.env
+.env.local
+*.p8

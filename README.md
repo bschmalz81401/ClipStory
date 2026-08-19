@@ -63,6 +63,37 @@ codesign -dvv --entitlements :- /path/to/ClipStory.app
 Expect `flags=0x10000(runtime)`, a `Timestamp=` line, the Developer ID authority
 chain, and `get-task-allow` set to `<false/>`.
 
+### Notarising and publishing
+
+`scripts/notarize-release.sh` does the whole pipeline in one shot: regenerate,
+build, verify the signature, submit to Apple, staple the ticket, repackage,
+confirm Gatekeeper accepts it, and replace the asset on both the Forgejo and
+GitHub releases.
+
+```bash
+cp .env.example .env    # then fill in one of the three auth routes
+./scripts/notarize-release.sh v1.0.0
+```
+
+Credentials live in `.env`, which is gitignored. Three auth routes are supported
+and documented in `.env.example`; the script prefers them in this order:
+
+1. **Keychain profile** — `xcrun notarytool store-credentials` puts the password
+   in the login Keychain and `.env` holds only the profile name. No secret on disk
+   in cleartext. Preferred.
+2. **App Store Connect API key** — `.env` holds the key id, issuer id, and a path
+   to the `.p8`. The private key stays in that file.
+3. **Apple ID + app-specific password** — plaintext secret in `.env`. Works, but
+   only worth using if the first two are impractical.
+
+Uploads reuse your existing `tea` and `gh` logins, so no repository tokens go in
+`.env`. Stapling is why the script repackages: a notarisation ticket attaches to
+the `.app`, not to the zip, so the archive has to be rebuilt after stapling for
+the ticket to ship with it.
+
+Both zip steps use `ditto -c -k --keepParent` rather than `zip`, which discards
+the extended attributes the code signature lives in.
+
 ## First-run permissions
 
 On first launch, ClipStory will ask you to grant **Accessibility** permission in **System Settings › Privacy & Security › Accessibility**. This is required for:
