@@ -55,9 +55,19 @@ xcodebuild -scheme ClipStory -configuration Release \
 
 echo "==> verifying signature"
 codesign --verify --deep --strict "$APP"
-codesign -dvv "$APP" 2>&1 | grep -qE 'flags=0x[0-9a-f]*10000' \
-  || { echo "error: hardened runtime missing" >&2; exit 1; }
-if codesign -d --entitlements :- "$APP" 2>/dev/null | grep -q 'get-task-allow</key><true/>'; then
+
+# Capture first, then match. Piping into `grep -q` under `set -o pipefail` is a
+# race: grep exits on the first match, the writer takes SIGPIPE, and pipefail
+# reports the pipeline as failed even though the pattern matched.
+SIG_INFO="$(codesign -dvv "$APP" 2>&1)"
+if ! grep -qE 'flags=0x[0-9a-f]*10000' <<<"$SIG_INFO"; then
+  echo "error: hardened runtime missing. codesign reported:" >&2
+  sed 's/^/    /' <<<"$SIG_INFO" >&2
+  exit 1
+fi
+
+ENTITLEMENTS="$(codesign -d --entitlements :- "$APP" 2>/dev/null || true)"
+if grep -q 'get-task-allow</key><true/>' <<<"$ENTITLEMENTS"; then
   echo "error: get-task-allow is true; notarisation will reject this" >&2
   exit 1
 fi
@@ -73,7 +83,7 @@ fi
 
 if ! grep -q 'status: Accepted' "$SUBMIT_OUT"; then
   echo "error: notarisation was not accepted. Apple's log:" >&2
-  SID="$(grep -m1 -oE '\bid: [0-9a-f-]{36}' "$SUBMIT_OUT" | head -1 | awk '{print $2}')"
+  SID="$(awk '/ id: [0-9a-f-]{36}/ {print $2; exit}' "$SUBMIT_OUT" || true)"
   [[ -n "$SID" ]] && xcrun notarytool log "$SID" "${NOTARY_AUTH[@]}" >&2
   exit 1
 fi
