@@ -32,6 +32,37 @@ xcodebuild -scheme ClipStory -configuration Debug build
 open ClipStory.xcodeproj
 ```
 
+## Release builds & signing
+
+Release builds are configured for **Developer ID** distribution (signed outside the
+Mac App Store, ready for notarisation):
+
+| Setting | Value |
+|---------|-------|
+| `CODE_SIGN_IDENTITY` | `Developer ID Application` |
+| `CODE_SIGN_STYLE` | `Manual` |
+| `DEVELOPMENT_TEAM` | `D9CX25ADWQ` |
+| `ENABLE_HARDENED_RUNTIME` | `YES` |
+| `OTHER_CODE_SIGN_FLAGS` | `--timestamp --options runtime` |
+| `CODE_SIGN_INJECT_BASE_ENTITLEMENTS` (Release) | `NO` |
+
+The last two matter for notarisation: `--timestamp` embeds a secure timestamp, and
+disabling entitlement injection stops Xcode adding `com.apple.security.get-task-allow`
+to the Release binary. The entitlements file also pins that key to `false` explicitly.
+
+```bash
+xcodebuild -scheme ClipStory -configuration Release build
+```
+
+Verify the resulting app before submitting it:
+
+```bash
+codesign -dvv --entitlements :- /path/to/ClipStory.app
+```
+
+Expect `flags=0x10000(runtime)`, a `Timestamp=` line, the Developer ID authority
+chain, and `get-task-allow` set to `<false/>`.
+
 ## First-run permissions
 
 On first launch, ClipStory will ask you to grant **Accessibility** permission in **System Settings › Privacy & Security › Accessibility**. This is required for:
@@ -85,7 +116,8 @@ Change those two values and rebuild.
 |-----|-------|-----|
 | `LSUIElement` | `true` | Hides Dock icon and app switcher |
 | `com.apple.security.app-sandbox` | `false` | Required — sandbox blocks CGEvent synthesis and global hotkeys |
-| `ENABLE_HARDENED_RUNTIME` | `YES` | Required for notarisation (future) |
+| `com.apple.security.get-task-allow` | `false` | Debugger-attach entitlement. Xcode injects it in dev builds; notarisation rejects any binary that has it |
+| `ENABLE_HARDENED_RUNTIME` | `YES` | Required for Developer ID signing and notarisation |
 
 ## Architecture notes
 

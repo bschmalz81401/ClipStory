@@ -10,5 +10,9 @@
     -->
     <key>com.apple.security.app-sandbox</key>
     <false/>
+    <!-- Explicitly block the debugger-attach entitlement Xcode injects in dev builds.
+         Apple's notarization service rejects any binary that has this set to true. -->
+    <key>com.apple.security.get-task-allow</key>
+    <false/>
 </dict>
 </plist>

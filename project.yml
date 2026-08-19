@@ -11,7 +11,7 @@ settings:
     SWIFT_VERSION: "5.9"
     MACOSX_DEPLOYMENT_TARGET: "13.0"
     CODE_SIGN_STYLE: Automatic
-    DEVELOPMENT_TEAM: ""
+    DEVELOPMENT_TEAM: "D9CX25ADWQ"
 
 targets:
   ClipStory:
@@ -30,7 +30,14 @@ targets:
         PRODUCT_BUNDLE_IDENTIFIER: com.bschmalz.ClipStory
         INFOPLIST_FILE: ClipStory/Resources/Info.plist
         CODE_SIGN_ENTITLEMENTS: ClipStory/ClipStory.entitlements
+        CODE_SIGN_IDENTITY: "Developer ID Application"
+        CODE_SIGN_STYLE: Manual
+        DEVELOPMENT_TEAM: "D9CX25ADWQ"
         ENABLE_HARDENED_RUNTIME: YES
+        OTHER_CODE_SIGN_FLAGS: "--timestamp --options runtime"
         OTHER_SWIFT_FLAGS: ""
+      configs:
+        Release:
+          CODE_SIGN_INJECT_BASE_ENTITLEMENTS: NO
     scheme:
       testTargets: []

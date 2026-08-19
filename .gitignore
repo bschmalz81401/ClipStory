@@ -1,0 +1,13 @@
+# macOS
+.DS_Store
+
+# Xcode build output
+build/
+DerivedData/
+*.xcuserstate
+xcuserdata/
+
+# Distribution archives
+*.zip
+*.dmg
+*.xcarchive
